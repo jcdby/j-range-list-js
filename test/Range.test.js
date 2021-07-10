@@ -123,5 +123,25 @@ describe("[After Init: ] Range list behavior test case: ", function () {
            expect(rl.rangeList).toEqual(expectResult5);
         });
     });
+    describe("[print behavior: ]", function () {
+        test("should print result as format of [10, 20) [30, 40)", function() {
+            console.log = jest.fn();
+            const rl = new RangeList();
+            rl.add([10, 20]);
+            rl.add([30, 40]);
+            const printString = "[10, 20) [30, 40)";
+            rl.print();
+            expect(console.log).toHaveBeenLastCalledWith(printString);
+        });
+        test("should cache print string when the range list has not been modified.", function() {
+            const rl = new RangeList();
+            rl.add([10, 20]);
+            rl.add([30, 40]);
+            rl.print();
+            rl.toString = jest.fn();
+            rl.print();
+            rl.print();
+            expect(rl.toString).toBeCalledTimes(0);
+        });
+    });
 });
-

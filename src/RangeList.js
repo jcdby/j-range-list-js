@@ -3,6 +3,7 @@ type Range = [number, number];
 
 export default class RangeList {
   rangeList: Range[] = [];
+  cachedPrintString: string = "";
 
   constructor() {
   }
@@ -19,6 +20,7 @@ export default class RangeList {
   add(range: Range) {
     this._validate(range);
     this._insertIntoRangeList(range);
+    this._clearCachedPrintStr();
   }
 
   /**
@@ -31,16 +33,38 @@ export default class RangeList {
   remove(range: Range) {
     this._validate(range);
     this._removeRangeFromList(range);
+    this._clearCachedPrintStr();
   }
 
+  /**
+   * cached print
+   * it prefer cached print string to print if there is no modification to range list
+   * when there is add or remove behavior occurs, those behaviors will clear cached print strings
+   * and then print method will re-calculate the string to print and store it to cache.
+   */
   print() {
+    if (this.cachedPrintString.length === 0) {
+      this.cachedPrintString = this.toString();
+    }
+    console.log(this.cachedPrintString);
+  }
 
+  toString(): string {
+    const printStringArr = [];
+    for (const range of this.rangeList) {
+      printStringArr.push(this._rangeToString(range));
+    }
+    return printStringArr.join(" ");
+  }
+
+  _clearCachedPrintStr() {
+    this.cachedPrintString = "";
   }
 
   _rangeToString(range: Range): string {
     return `[${range[0]}, ${range[1]})`
   }
-  
+
   _validate(range: [number, number]) {
     if (!range || !(range instanceof Array) || range.length !== 2) {
       throw new Error("Range can only be pair of numbers.");
