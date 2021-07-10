@@ -13,12 +13,21 @@ export default class RangeList {
 
   /**
    *
-   *
-   * @param range tuple of two numbers which indicates beginning and end of range
+   * Adds a range to the list. It will merge the ranges overlapped.
+   * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
    */
   add(range: Range) {
     this.validate(range);
     this.insertIntoRangeList(range);
+  }
+
+  /**
+   *
+   * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
+   */
+  remove(range: Range) {
+    this.validate(range);
+
   }
 
 
@@ -46,11 +55,26 @@ export default class RangeList {
   }
 
   mergeRanges(range: Range, overlapRanges: Range[]): Range {
-    return [0, 0];
+    const ranges = [...overlapRanges, range];
+    let begin = Number.MAX_SAFE_INTEGER;
+    let end = Number.MIN_SAFE_INTEGER;
+    // find the minimum number in the list to be merged.
+    // and find the maximum number in the list to be merged.
+    for (const _range of ranges) {
+      const [_begin, _end] = _range;
+      if (_begin < begin) {
+        begin = _begin;
+      }
+      if (_end > end) {
+        end = _end;
+      }
+    }
+    return [begin, end];
   }
 
   findOverlapRanges(range: Range): Range[] {
     const overlapRanges = [];
+    const indexOfEleToDelete = [];
     for (let i = 0; i < this.rangeList.length; i++) {
       const rangeInList = this.rangeList[i];
       const [_beginning, _end] = rangeInList;
@@ -58,11 +82,14 @@ export default class RangeList {
       if (beginning <= _end && end >= _beginning) {
         // add overlap range into overlap range list.
         overlapRanges.push(rangeInList);
-        // at the same time, update this.rangeList.
-        // Since we are going to merge overlap ranges, and re-push them into this.rangeList.
-        this.rangeList.splice(i, 1);
+        // record the index of the overlap ranges.
+        indexOfEleToDelete.push(i);
       }
     }
+    // at the same time, update this.rangeList.
+    // Since we are going to merge overlap ranges, and re-push them into this.rangeList.
+    this.rangeList =
+        this.rangeList.filter((range, index) => indexOfEleToDelete.indexOf(index) === -1);
     return overlapRanges;
   }
 }

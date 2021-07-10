@@ -51,10 +51,37 @@ describe("[After Init: ] Range list behavior test case: ", function () {
                 expect(rl.rangeList).toEqual(expectResult);
             });
             test("should merge overlap ranges and insert merged range into list.", function() {
+                const rl = new RangeList();
+                rl.add([10, 20]);
+                rl.add([15, 20]);
+                const expectResult = [[10,20]];
+                expect(rl.rangeList).toEqual(expectResult);
 
+                rl.add([30, 40]);
+                rl.add([21, 36]);
+                const expectResult2 = [[10,20], [21, 40]];
+                expect(rl.rangeList).toEqual(expectResult2);
+
+                rl.add([20,20]);
+                const expectResult3 = [[10, 20], [21, 40]];
+                expect(rl.rangeList).toEqual(expectResult3);
+
+                rl.add([20,21]);
+                const expectResult4 = [[10,40]];
+                expect(rl.rangeList).toEqual(expectResult4);
+                
+                rl.add([40, 41]);
+                const expectResult5 = [[10, 41]];
+                expect(rl.rangeList).toEqual(expectResult5);
+                
+                rl.add([22, 50]);
+                const expectResult6 = [[10, 50]];
+                expect(rl.rangeList).toEqual(expectResult6);
             });
         });
-
+    });
+    describe("removing behavior: ", function() {
 
     });
+
 });
