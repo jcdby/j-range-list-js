@@ -17,8 +17,8 @@ export default class RangeList {
    * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
    */
   add(range: Range) {
-    this.validate(range);
-    this.insertIntoRangeList(range);
+    this._validate(range);
+    this._insertIntoRangeList(range);
   }
 
   /**
@@ -29,12 +29,19 @@ export default class RangeList {
    * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
    */
   remove(range: Range) {
-    this.validate(range);
-    this.removeRangeFromList(range);
+    this._validate(range);
+    this._removeRangeFromList(range);
   }
 
+  print() {
 
-  validate(range: [number, number]) {
+  }
+
+  _rangeToString(range: Range): string {
+    return `[${range[0]}, ${range[1]})`
+  }
+  
+  _validate(range: [number, number]) {
     if (!range || !(range instanceof Array) || range.length !== 2) {
       throw new Error("Range can only be pair of numbers.");
     }
@@ -47,16 +54,16 @@ export default class RangeList {
     }
   }
 
-  insertIntoRangeList(range: Range) {
-    const overlapRanges: Range[] = this.findOverlapRanges(range);
+  _insertIntoRangeList(range: Range) {
+    const overlapRanges: Range[] = this._findOverlapRanges(range);
     let updatedRange = range;
     if (overlapRanges.length > 0) {
-      updatedRange = this.mergeRanges(range, overlapRanges);
+      updatedRange = this._mergeRanges(range, overlapRanges);
     }
-    this.insertRange(updatedRange);
+    this._insertRange(updatedRange);
   }
 
-  mergeRanges(range: Range, overlapRanges: Range[]): Range {
+  _mergeRanges(range: Range, overlapRanges: Range[]): Range {
     const ranges = [...overlapRanges, range];
     let begin = Number.MAX_SAFE_INTEGER;
     let end = Number.MIN_SAFE_INTEGER;
@@ -74,7 +81,7 @@ export default class RangeList {
     return [begin, end];
   }
 
-  findOverlapRanges(range: Range): Range[] {
+  _findOverlapRanges(range: Range): Range[] {
     const overlapRanges = [];
     const indexOfEleToDelete = [];
     for (let i = 0; i < this.rangeList.length; i++) {
@@ -95,16 +102,16 @@ export default class RangeList {
     return overlapRanges;
   }
 
-  removeRangeFromList(range: Range) {
-    const overlapRanges: Range[] = this.findOverlapRanges(range);
+  _removeRangeFromList(range: Range) {
+    const overlapRanges: Range[] = this._findOverlapRanges(range);
     let updatedRanges = [];
     if (overlapRanges.length > 0) {
-      updatedRanges = this.separateRanges(range, overlapRanges);
+      updatedRanges = this._separateRanges(range, overlapRanges);
     }
-    this.insertRanges(updatedRanges);
+    this._insertRanges(updatedRanges);
   }
 
-  separateRanges(rangeToDelete: Range, overlapRanges: Range[]): Range[] {
+  _separateRanges(rangeToDelete: Range, overlapRanges: Range[]): Range[] {
     const separatedRanges = [];
     for (const overlapRange of overlapRanges) {
       const [begin4OverlapRange, end4OverlapRange] = overlapRange;
@@ -121,17 +128,17 @@ export default class RangeList {
     return separatedRanges;
   }
 
-  insertRange(range: Range) {
+  _insertRange(range: Range) {
     this.rangeList.push(range);
-    this.sortRangeList();
+    this._sortRangeList();
   }
 
-  insertRanges(ranges: Range[]) {
+  _insertRanges(ranges: Range[]) {
     this.rangeList = [...this.rangeList, ...ranges];
-    this.sortRangeList();
+    this._sortRangeList();
   }
 
-  sortRangeList() {
+  _sortRangeList() {
     this.rangeList.sort((range1, range2) => range1[0]-range2[0]);
   }
 }
