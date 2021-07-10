@@ -1,0 +1,13 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/.*
+[include]
+
+[libs]
+
+[lints]
+all=warn
+untyped-type-import=error
+sketchy-null=error
+[options]
+
+[strict]
