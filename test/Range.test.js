@@ -81,7 +81,47 @@ describe("[After Init: ] Range list behavior test case: ", function () {
         });
     });
     describe("removing behavior: ", function() {
+        test("should return the original range list if the range to be removed is outside of this range list.", function() {
+            const rl = new RangeList();
+            rl.add([10, 20]);
+            rl.remove([50, 60]);
+            expect(rl.rangeList).toEqual([[10,20]]);
+        });
+        test("should return the rest of range list if we removed exact range from range list.", function () {
+           const rl = new RangeList();
+           rl.add([10,20]);
+           rl.remove([10, 20]);
+           expect(rl.rangeList).toEqual([]);
+        });
+        test("should return separated range list if the range to be removed is overlapped with other ranges.", function () {
+           const rl = new RangeList();
+           rl.add([10, 15]);
+           rl.add([20, 25]);
+           rl.remove([15, 20]);
+           const expectResult = [[10,15], [20, 25]];
+           expect(rl.rangeList).toEqual(expectResult);
 
+           rl.remove([20,23]);
+           const expectResult1 = [[10, 15], [23,25]];
+           expect(rl.rangeList).toEqual(expectResult1);
+
+           rl.remove([23,23]);
+           const expectResult2 = [[10,15], [23,25]];
+           expect(rl.rangeList).toEqual(expectResult2);
+
+           rl.remove([23,24]);
+           const expectResult3 = [[10, 15], [24, 25]];
+           expect(rl.rangeList).toEqual(expectResult3);
+
+           rl.remove([12,13]);
+           const expectResult4 = [[10, 12], [13,15],[24,25]];
+           expect(rl.rangeList).toEqual(expectResult4);
+
+           rl.add([25, 29]);
+           rl.remove([11,25]);
+           const expectResult5 = [[10, 11], [25, 29]];
+           expect(rl.rangeList).toEqual(expectResult5);
+        });
     });
 
 });

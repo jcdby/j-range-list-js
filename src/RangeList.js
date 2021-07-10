@@ -22,12 +22,15 @@ export default class RangeList {
   }
 
   /**
-   *
+   * Removes a range from the list.
+   * Separate a range if the range to be removed is included in another range in range list.
+   * eg. given range list = [[10, 30]], range to be remove is [15, 20],
+   * then the return value would be [[10, 15],[20,30]]
    * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
    */
   remove(range: Range) {
     this.validate(range);
-
+    this.removeRangeFromList(range);
   }
 
 
@@ -50,8 +53,7 @@ export default class RangeList {
     if (overlapRanges.length > 0) {
       updatedRange = this.mergeRanges(range, overlapRanges);
     }
-    this.rangeList.push(updatedRange);
-    this.rangeList.sort((range1, range2) => range1[0]-range2[0]);
+    this.insertRange(updatedRange);
   }
 
   mergeRanges(range: Range, overlapRanges: Range[]): Range {
@@ -89,7 +91,47 @@ export default class RangeList {
     // at the same time, update this.rangeList.
     // Since we are going to merge overlap ranges, and re-push them into this.rangeList.
     this.rangeList =
-        this.rangeList.filter((range, index) => indexOfEleToDelete.indexOf(index) === -1);
+        this.rangeList.filter((range: Range, index: number) => indexOfEleToDelete.indexOf(index) === -1);
     return overlapRanges;
+  }
+
+  removeRangeFromList(range: Range) {
+    const overlapRanges: Range[] = this.findOverlapRanges(range);
+    let updatedRanges = [];
+    if (overlapRanges.length > 0) {
+      updatedRanges = this.separateRanges(range, overlapRanges);
+    }
+    this.insertRanges(updatedRanges);
+  }
+
+  separateRanges(rangeToDelete: Range, overlapRanges: Range[]): Range[] {
+    const separatedRanges = [];
+    for (const overlapRange of overlapRanges) {
+      const [begin4OverlapRange, end4OverlapRange] = overlapRange;
+      const [begin4RangeToDel, end4RangeToDel] = rangeToDelete;
+
+      if (begin4RangeToDel > begin4OverlapRange) {
+        separatedRanges.push([begin4OverlapRange, begin4RangeToDel]);
+      }
+      if (end4RangeToDel < end4OverlapRange) {
+        separatedRanges.push([end4RangeToDel, end4OverlapRange]);
+      }
+    }
+
+    return separatedRanges;
+  }
+
+  insertRange(range: Range) {
+    this.rangeList.push(range);
+    this.sortRangeList();
+  }
+
+  insertRanges(ranges: Range[]) {
+    this.rangeList = [...this.rangeList, ...ranges];
+    this.sortRangeList();
+  }
+
+  sortRangeList() {
+    this.rangeList.sort((range1, range2) => range1[0]-range2[0]);
   }
 }
