@@ -1,3 +1,12 @@
 {
-  "presets": ["@babel/preset-flow"]
+  "presets": [
+    "minify",
+    "@babel/preset-env",
+    "@babel/preset-flow"
+  ],
+  "env": {
+    "test": {
+      "plugins": ["@babel/plugin-transform-modules-commonjs"]
+    }
+  }
 }
