@@ -9,7 +9,7 @@
   "scripts": {
     "build": "babel src/ -d lib/",
     "test": "jest --coverage",
-    "patchPublish": "npm version path -m 'Upgrade to %s'"
+    "patchPublish": "npm version path -m 'Upgrade to %s' && npm publish"
   },
   "keywords": [
     "rl"
