@@ -86,7 +86,7 @@ use 'yarn test' to check the coverage
 
 
 ## Git 
-**master** branch for production release version  
+**main** branch for production release version  
 **develop** branch for QA release version  
 **feature** branch for feature development  
   
