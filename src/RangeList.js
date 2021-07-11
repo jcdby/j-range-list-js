@@ -124,6 +124,7 @@ export default class RangeList {
 
   _findOverlapRanges(range: Range): Range[] {
     const overlapRanges = [];
+    // index of overlap ranges
     const indexOfEleToDelete = [];
 
     for (let i = 0; i < this.rangeList.length; i++) {
