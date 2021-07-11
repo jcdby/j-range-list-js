@@ -107,16 +107,17 @@ export default class RangeList {
 
     for (let i = 0; i < this.rangeList.length; i++) {
       const rangeInList = this.rangeList[i];
-      const [_beginning, _end] = rangeInList;
-      const [beginning, end] = range;
-      if (beginning <= _end && end >= _beginning) {
+      const [begin4RangeInList, end4RangeInList] = rangeInList;
+      const [begin4InputRange, end4InputRange] = range;
+      // overlap condition
+      if (begin4InputRange <= end4RangeInList && end4InputRange >= begin4RangeInList) {
         // add overlap range into overlap range list.
         overlapRanges.push(rangeInList);
         // record the index of the overlap ranges.
         indexOfEleToDelete.push(i);
         // this is to check the last range in list that overlaps with the input range
         // make this loop break earlier.
-        if (end <= _end) {
+        if (end4InputRange <= end4RangeInList) {
           break;
         }
       }
@@ -137,15 +138,29 @@ export default class RangeList {
     this._insertRanges(updatedRanges);
   }
 
+  /**
+   * find the ranges that can be separated from overlap ranges by the rangeToDelete
+   * eg. range list = [[10, 30], [40, 50]], rangeToDelete = [20, 44].
+   * then left part = [10, 20]
+   * right part = [44, 50]
+   * @param rangeToDelete
+   * @param overlapRanges
+   * @returns {Range[]}
+   * @private
+   */
   _separateRanges(rangeToDelete: Range, overlapRanges: Range[]): Range[] {
     const separatedRanges = [];
     for (const overlapRange of overlapRanges) {
       const [begin4OverlapRange, end4OverlapRange] = overlapRange;
       const [begin4RangeToDel, end4RangeToDel] = rangeToDelete;
 
+      // left part should remain in range list
+      // that is separated by the rangeToDelete
       if (begin4RangeToDel > begin4OverlapRange) {
         separatedRanges.push([begin4OverlapRange, begin4RangeToDel]);
       }
+      // right part should remain in range list
+      // that is separated by the rangeToDelete
       if (end4RangeToDel < end4OverlapRange) {
         separatedRanges.push([end4RangeToDel, end4OverlapRange]);
       }
