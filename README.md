@@ -93,3 +93,11 @@ use 'yarn test' to check the coverage
 make sure squash merge feature to develop branch  
 
 
+## Publish
+Before publish, you should make sure thins as below:  
+1. change .npmrc **registry**: registry.yarnpkg.com
+2. make sure you have logged in  
+3. make sure all new changes has been merged to master branch, and you have checked out to master branch.
+
+
+

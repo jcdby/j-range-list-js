@@ -9,7 +9,9 @@
   "scripts": {
     "build": "babel src/ -d lib/",
     "test": "jest --coverage",
-    "patchPublish": "yarn build && yarn version --patch -m 'Upgrade to %s' && npm publish"
+    "patchPublish": "yarn build && yarn version --patch -m 'Patch Upgrade to %s' && npm publish",
+    "minorPublish": "yarn build && yarn version --minor -m 'Minor Upgrade to %s' && npm publish",
+    "majorPublish": "yarn build && yarn version --major -m 'Major Upgrade to %s' && npm publish"
   },
   "keywords": [
     "rl"
