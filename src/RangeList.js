@@ -2,10 +2,12 @@
 type Range = [number, number];
 
 export default class RangeList {
-  rangeList: Range[] = [];
-  cachedPrintString: string = "";
+  rangeList: Range[];
+  cachedPrintString: string;
 
-  constructor() {
+  constructor(rangeList: Range[] = []) {
+    this.rangeList = rangeList;
+    this.cachedPrintString = "";
   }
 
   get size(): number {
@@ -15,7 +17,7 @@ export default class RangeList {
   /**
    *
    * Adds a range to the list. It will merge the ranges overlapped.
-   * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
+   * @param range {Range} tuple of two numbers which indicates beginning and end of range
    */
   add(range: Range) {
     this._validate(range);
@@ -28,7 +30,7 @@ export default class RangeList {
    * Separate a range if the range to be removed is included in another range in range list.
    * eg. given range list = [[10, 30]], range to be remove is [15, 20],
    * then the return value would be [[10, 15],[20,30]]
-   * @param range {[number, number]} tuple of two numbers which indicates beginning and end of range
+   * @param range {Range} tuple of two numbers which indicates beginning and end of range
    */
   remove(range: Range) {
     this._validate(range);
@@ -49,22 +51,34 @@ export default class RangeList {
     console.log(this.cachedPrintString);
   }
 
+  /**
+   * format range list to [xx, xx) ...
+   * @returns {string}
+   */
   toString(): string {
-    const printStringArr = [];
-    for (const range of this.rangeList) {
-      printStringArr.push(this._rangeToString(range));
-    }
-    return printStringArr.join(" ");
+    return this.rangeList.map(range => this._rangeToString(range)).join(" ");
   }
 
   _clearCachedPrintStr() {
     this.cachedPrintString = "";
   }
 
+  /**
+   * format a range
+   * @param range
+   * @returns {string}
+   * @private
+   */
   _rangeToString(range: Range): string {
     return `[${range[0]}, ${range[1]})`
   }
 
+  /**
+   * validate input range
+   * range should be pair of number and non-null and ascend sort
+   * @param range {Range}
+   * @private
+   */
   _validate(range: [number, number]) {
     if (!range || !(range instanceof Array) || range.length !== 2) {
       throw new Error("Range can only be pair of numbers.");
@@ -78,13 +92,20 @@ export default class RangeList {
     }
   }
 
+  /**
+   * main logic for adding a range into range list
+   * 1. check overlap ranges.
+   * 2. if there is overlap ranges, merge and push the merged range to range list, otherwise, push the input range to range list
+   * @param range {Range}
+   * @private
+   */
   _insertIntoRangeList(range: Range) {
     const overlapRanges: Range[] = this._findOverlapRanges(range);
     let updatedRange = range;
     if (overlapRanges.length > 0) {
       updatedRange = this._mergeRanges(range, overlapRanges);
     }
-    this._insertRange(updatedRange);
+    this._insertSingleRange(updatedRange);
   }
 
   _mergeRanges(range: Range, overlapRanges: Range[]): Range {
@@ -103,6 +124,7 @@ export default class RangeList {
 
   _findOverlapRanges(range: Range): Range[] {
     const overlapRanges = [];
+    // index of overlap ranges
     const indexOfEleToDelete = [];
 
     for (let i = 0; i < this.rangeList.length; i++) {
@@ -122,13 +144,22 @@ export default class RangeList {
         }
       }
     }
-    // at the same time, update this.rangeList.
+    // update this.rangeList.
     // Since we are going to merge overlap ranges, and re-push them into this.rangeList.
+    // filter out ranges that overlaps with input range
     this.rangeList =
         this.rangeList.filter((range: Range, index: number) => indexOfEleToDelete.indexOf(index) === -1);
     return overlapRanges;
   }
 
+  /**
+   * main logic for remove range from range list
+   * 1. check overlap ranges
+   * 2. keep the range list if there is no overlap ranges or separate ranges
+   * 3. push the separated ranges into range list
+   * @param range
+   * @private
+   */
   _removeRangeFromList(range: Range) {
     const overlapRanges: Range[] = this._findOverlapRanges(range);
     let updatedRanges = [];
@@ -169,7 +200,7 @@ export default class RangeList {
     return separatedRanges;
   }
 
-  _insertRange(range: Range) {
+  _insertSingleRange(range: Range) {
     this.rangeList.push(range);
     this._sortRangeList();
   }
