@@ -1,5 +1,5 @@
 {
-  "name": "range-list",
+  "name": "j-range-list-js",
   "version": "0.0.1",
   "description": "Range List including list of ranges defined as [number, number)",
   "main": "lib/RangeList.js",
@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "babel src/ -d lib/",
-    "prepublish": "yarn run build",
-    "test": "jest"
+    "test": "jest --coverage",
+    "patchPublish": "npm version path -m 'Upgrade to %s'"
   },
   "keywords": [
     "rl"

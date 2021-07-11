@@ -95,12 +95,8 @@ export default class RangeList {
     // and find the maximum number in the list to be merged.
     for (const _range of ranges) {
       const [_begin, _end] = _range;
-      if (_begin < begin) {
-        begin = _begin;
-      }
-      if (_end > end) {
-        end = _end;
-      }
+      begin = Math.min(_begin, begin);
+      end = Math.max(_end, end);
     }
     return [begin, end];
   }
@@ -108,6 +104,7 @@ export default class RangeList {
   _findOverlapRanges(range: Range): Range[] {
     const overlapRanges = [];
     const indexOfEleToDelete = [];
+
     for (let i = 0; i < this.rangeList.length; i++) {
       const rangeInList = this.rangeList[i];
       const [_beginning, _end] = rangeInList;
@@ -117,6 +114,11 @@ export default class RangeList {
         overlapRanges.push(rangeInList);
         // record the index of the overlap ranges.
         indexOfEleToDelete.push(i);
+        // this is to check the last range in list that overlaps with the input range
+        // make this loop break earlier.
+        if (end <= _end) {
+          break;
+        }
       }
     }
     // at the same time, update this.rangeList.
